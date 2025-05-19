@@ -1,0 +1,20 @@
+# IDE and environment
+.idea/
+/shelf/
+/workspace.xml
+/media/
+venv/
+.env
+db.sqlite3
+format_code.sh
+PRAGMA
+node_modules
+
+
+# Coverage
+.coverage
+coverage/
+
+# Python caches
+**/__pycache__/
+*.pyc

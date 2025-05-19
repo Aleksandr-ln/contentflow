@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load register_filters %}
+
+{% block title %}
+Register | ContentFlow
+{% endblock %}
+
+{% block content %}
+<h1>Register</h1>
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li class="{{ message.tags }}">
+        {{ message|escape }}
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% if form.password.errors %}
+  <li>{{ form.password.errors|normalize_password_errors }}</li>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    <p>
+        {{ form.username.label_tag }}<br>
+        {{ form.username }}
+    </p>
+    <p>
+        {{ form.email.label_tag }}<br>
+        {{ form.email }}
+    </p>
+    <p>
+        {{ form.password.label_tag }}<br>
+        {{ form.password }}
+    </p>
+    <p>
+        {{ form.password_confirm.label_tag }}<br>
+        {{ form.password_confirm }}
+    </p>
+
+    <button type="submit">Sign up</button>
+</form>
+
+<p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+{% endblock %}

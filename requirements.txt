@@ -1,0 +1,10 @@
+django>=4.2,<5.0
+Pillow
+python-decouple
+pytest
+pytest-django
+coverage
+Faker
+django-extensions
+psycopg2-binary
+django-storages[boto3]

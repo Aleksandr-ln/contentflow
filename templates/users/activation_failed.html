@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}
+Activation Failed | ContentFlow
+{% endblock %}
+
+{% block content %}
+<h1>Activation Failed</h1>
+<p>The activation link is invalid or has already been used.</p>
+
+<p><a href="{% url 'register' %}">Try again</a></p>
+{% endblock %}

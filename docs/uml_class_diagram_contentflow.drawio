@@ -1,0 +1,55 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.2.2 Chrome/134.0.6998.178 Electron/35.1.2 Safari/537.36" version="26.2.2">
+  <diagram name="ContentFlow UML" id="UML1">
+    <mxGraphModel dx="1092" dy="833" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="User" style="shape=swimlane;;fillColor=#FFFACD;fontStyle=1;fontSize=12" parent="1" vertex="1">
+          <mxGeometry x="314" y="40" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="oXfpZTfZ02aLkEYVmNsi-14" value="&lt;span style=&quot;font-weight: 700;&quot;&gt;email: str&lt;br&gt;full_name: str&lt;br&gt;bio: Text&lt;br&gt;avatar&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="2" vertex="1">
+          <mxGeometry x="50" y="40" width="100" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="3" value="Post" style="shape=swimlane;;fillColor=#FFFACD;fontStyle=1;fontSize=12" parent="1" vertex="1">
+          <mxGeometry x="146" y="210" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="oXfpZTfZ02aLkEYVmNsi-15" value="&lt;span style=&quot;font-weight: 700;&quot;&gt;caption: Text&lt;br&gt;created_at: datetime&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="3" vertex="1">
+          <mxGeometry x="30" y="55" width="140" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="4" value="Image" style="shape=swimlane;;fillColor=#FFFACD;fontStyle=1;fontSize=12" parent="1" vertex="1">
+          <mxGeometry x="26" y="380" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="oXfpZTfZ02aLkEYVmNsi-17" value="&lt;span style=&quot;font-weight: 700;&quot;&gt;image:&amp;nbsp;&lt;/span&gt;ImageField" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="4" vertex="1">
+          <mxGeometry x="40" y="60" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="5" value="Tag" style="shape=swimlane;;fillColor=#FFFACD;fontStyle=1;fontSize=12" parent="1" vertex="1">
+          <mxGeometry x="266" y="380" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="oXfpZTfZ02aLkEYVmNsi-18" value="&lt;span style=&quot;font-weight: 700;&quot;&gt;name: str&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="5" vertex="1">
+          <mxGeometry x="60" y="60" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="6" value="Like" style="shape=swimlane;;fillColor=#FFFACD;fontStyle=1;fontSize=12" parent="1" vertex="1">
+          <mxGeometry x="482" y="210" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="oXfpZTfZ02aLkEYVmNsi-19" value="&lt;span style=&quot;font-weight: 700;&quot;&gt;created_at: datetime&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="6" vertex="1">
+          <mxGeometry x="30" y="60" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="10" value="1..*" style="endArrow=block;" parent="1" source="2" target="3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="11" value="1..*" style="endArrow=block;" parent="1" source="3" target="4" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="12" value="*..*" style="endArrow=block;" parent="1" source="3" target="5" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="13" value="*..*" style="endArrow=block;" parent="1" source="2" target="6" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="14" value="*..1" style="endArrow=block;" parent="1" source="6" target="3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

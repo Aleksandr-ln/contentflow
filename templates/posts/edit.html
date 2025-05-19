@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Edit Post | ContentFlow
+{% endblock %}
+
+{% block content %}
+<div class="edit-post-container">
+  <h1>Edit Post</h1>
+
+{% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+      <li class="{{ message.tags }}">
+        {{ message|escape }}
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-row">
+        {{ form.caption.label_tag }}
+        {{ form.caption }}
+    </div>
+
+    <div class="form-row">
+        {{ form.tags.label_tag }}
+        {{ form.tags }}
+    </div>
+
+    {{ formset.management_form }}
+
+    {% if form.errors or formset.non_form_errors or formset.errors %}
+      <ul style="color: red;">
+        {% for field in form %}
+          {% for error in field.errors %}
+            <li>{{ field.label }}: {{ error }}</li>
+          {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+        {% for error in formset.non_form_errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+        {% for form in formset.forms %}
+          {% for field in form %}
+            {% for error in field.errors %}
+              <li>{{ field.label }}: {{ error }}</li>
+            {% endfor %}
+          {% endfor %}
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <h3>Images</h3>
+    <div class="edit-images">
+        {% for image_form in formset %}
+        <div class="edit-image-item">
+            {% for hidden_field in image_form.hidden_fields %}
+            {{ hidden_field }}
+            {% endfor %}
+
+            <div class="edit-image-preview">
+                <img src="{% if image_form.instance.image %}{{ image_form.instance.image.url }}{% else %}{% static 'images/placeholder.png' %}{% endif %}"
+                     alt="Image preview">
+            </div>
+
+            <div class="edit-image-controls">
+                <label>
+                    {{ image_form.image.label }}:
+                    {{ image_form.image }}
+                </label>
+                <label>
+                    {{ image_form.DELETE }} Delete
+                </label>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <button type="submit">Save changes</button>
+</form>
+
+<p>
+  <a href="{% url 'users:profile' request.user.username %}">← Back to profile</a>
+</p>
+</div>  {# end of .edit-post-container #}
+{% endblock %}

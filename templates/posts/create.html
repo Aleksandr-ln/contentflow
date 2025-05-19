@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}
+Create Post | ContentFlow
+{% endblock %}
+
+{% block content %}
+<h1>Create Post</h1>
+
+{% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+      <li class="{{ message.tags }}">
+        {{ message|escape }}
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ post_form.as_p }}
+
+    <p id="image-count">Selected: 0 / 5</p>
+    {{ formset.management_form }}
+
+    {% for form in formset %}
+        <div class="image-upload">
+            {{ form.as_p }}
+            {% if form.errors %}
+                <div style="color: red;">
+                    {{ form.errors }}
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+
+    {% if formset.non_form_errors %}
+        <div style="color: red;">
+            {{ formset.non_form_errors }}
+        </div>
+    {% endif %}
+
+    <button type="submit">Publish</button>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const fileInputs = document.querySelectorAll('input[type="file"]');
+    const maxFiles = 5;
+    const counter = document.getElementById('image-count');
+
+    fileInputs.forEach(input => {
+        input.addEventListener('change', function () {
+            const selected = [...fileInputs].filter(i => i.files.length > 0);
+            counter.textContent = `Selected: ${selected.length} / ${maxFiles}`;
+
+            if (selected.length > maxFiles) {
+                alert(`You can upload a maximum of ${maxFiles} images.`);
+                this.value = '';
+                counter.textContent = `Selected: ${selected.length - 1} / ${maxFiles}`;
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

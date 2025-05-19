@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Feed | ContentFlow
+{% endblock %}
+
+{% block content %}
+
+<script>
+  const tagUrlBase = "{% url 'post-by-tag' 'TAG_PLACEHOLDER' %}".replace('TAG_PLACEHOLDER', '');
+</script>
+
+<h1>Post Feed</h1>
+<a href="{% url 'post-create' %}">Create Post</a>
+
+{% load post_tags %}
+
+{% if filter_tag %}
+<h2>Posts with tag: #{{ filter_tag }}</h2>
+<p><a href="{% url 'post-list' %}">Back to all posts</a></p>
+{% endif %}
+
+{% for post in posts %}
+<div class="post" id="post-{{ post.id }}">
+    <div class="post-header">
+        <a href="{% url 'users:profile' post.author.username %}">
+            {% if post.author.avatar %}
+            <img class="avatar-small" src="{{ post.author.avatar.url }}" alt="{{ post.author.username }}">
+            {% else %}
+            <img class="avatar-small" src="{% static 'images/default-avatar.png' %}" alt="default avatar">
+            {% endif %}
+        </a>
+        <h3 class="post-author">
+            <a href="{% url 'users:profile' post.author.username %}">
+                {{ post.author.full_name|default:post.author.username }}
+            </a>
+        </h3>
+    </div>
+
+    {% if post.caption %}
+    <div style="white-space: pre-line; margin-bottom: 0;">
+        {{ post.caption|remove_hashtags|remove_trailing_newlines|escape }}
+    </div>
+    {% endif %}
+
+    <div class="post-tags" style="margin-bottom: 1rem; display: flex; flex-wrap: wrap; gap: 0.4rem;">
+        {% for tag in post.caption|extract_hashtags %}
+        <a href="{% url 'post-by-tag' tag|slice:'1:' %}" class="post-tag">{{ tag }}</a>
+        {% endfor %}
+    </div>
+
+    <div class="image-wrapper">
+        <div class="image-gallery" style="margin-bottom: 1rem; text-align: center;">
+            {% for image in post.images.all %}
+            <a href="javascript:void(0);"
+               class="thumbnail-link"
+               data-full="{{ image.image.url }}"
+               data-caption="{{ image.caption|default:post.caption|escapejs }}"
+               data-index="{{ forloop.counter0 }}"
+               data-group="{{ post.id }}">
+                {% if image.thumbnail %}
+                <img src="{{ image.thumbnail.url }}" alt="{{ image.caption|default:post.caption }}" class="post-image">
+                {% else %}
+                <img src="{{ image.image.url }}" alt="{{ image.caption|default:post.caption }}" class="post-image">
+                {% endif %}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <p>
+        <button
+                class="like-button {% if post.has_liked %}liked{% endif %}"
+                data-post-id="{{ post.id }}"
+                data-liked="{{ post.has_liked|yesno:'true,false' }}"
+        >
+            <span class="heart">{% if post.has_liked %}❤️{% else %}🤍{% endif %}</span>
+            <span class="label">{% if post.has_liked %}Unlike{% else %}Like{% endif %}</span>
+        </button>
+        <span id="likes-count-{{ post.id }}">
+                {{ post.likes_count }} like{{ post.likes_count|pluralize }}
+            </span>
+    </p>
+
+    <div class="post-time" data-utc="{{ post.created_at|date:'c' }}"></div>
+    <hr>
+</div>
+{% endfor %}
+
+{% if page_obj.has_other_pages %}
+<div class="pagination">
+    {% if page_obj.has_previous %}
+    <a href="?page=1">First</a>
+    <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+    {% endif %}
+
+    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}">Next</a>
+    <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/like-toggle.js' %}"></script>
+<script src="{% static 'js/modal.js' %}"></script>
+<script src="{% static 'js/post-time.js' %}"></script>
+{% endblock %}
