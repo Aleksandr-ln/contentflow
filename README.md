@@ -175,7 +175,7 @@ Full guide: [docs/frontend-testing.md](docs/frontend-testing.md)
 This project supports local storage in development and AWS S3 + CloudFront in production.
 
 For detailed storage classes, S3/CloudFront integration, and environment mapping, see: 
-[Architecture Overview](docs/architecture.md/#storage-configuration-s3--cloudfront)
+[Architecture Overview](docs/architecture.md/#s3--cloudfront-configuration)
 
 ### Database Configuration
 
@@ -232,7 +232,7 @@ Make sure to include:
 - Database connection settings
 - Email provider config
 
-See full list of environment variables in the [Architecture Overview](docs/architecture.md#required-environment-variables-env)
+See full list of environment variables in the [Architecture Overview](docs/architecture.md#configuration--environment)
 
 ### Set Up PostgreSQL (RDS)
 
