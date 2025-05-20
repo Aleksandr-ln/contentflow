@@ -92,7 +92,8 @@ class Command(BaseCommand):
 
         if options['clear']:
             self.stdout.write(self.style.WARNING(
-                "Clearing existing fake data..."))
+                "Clearing existing fake data..."
+            ))
             self.clear_fake_data()
             self.stdout.write(self.style.SUCCESS("Fake data cleared."))
 
@@ -109,10 +110,14 @@ class Command(BaseCommand):
                 user = User.objects.create_user(
                     username=f"user{i}",
                     email=email,
-                    password="password123",
+                    password="password1234",
                     is_active=True
                 )
                 users.append(user)
+
+        self.stdout.write(self.style.SUCCESS(
+            "All fake users created with password: password1234"
+        ))
 
         for user in users:
             for _ in range(random.randint(2, 5)):

@@ -109,6 +109,7 @@ The `seed_data` management command is implemented as a Django custom command loc
 It is designed to:
 
 * Create N users (`userX@example.com`)
+* All fake users created with password: password1234
 * For each user, generate 2–5 posts with:
 
   * Random captions

@@ -129,6 +129,7 @@ python manage.py seed_data --clear --count 15   # Reset fake data
 Created:
 
 - Users: user0@example.com, user1@...
+- All fake users created with password: password1234
 - Posts: Each with caption, tags, and up to 5 images
 - Tags: Extracted from captions
 - Thumbnails: Auto-generated from images
