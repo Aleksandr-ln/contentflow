@@ -23,10 +23,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
       try {
         const response = await fetch("/likes/ajax/like-toggle/", {
-          method: 'POST',
-          headers: { 'X-CSRFToken': csrftoken },
-          body: formData
-        });
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        })
+
+        if (response.status === 403) {
+            alert("Please log in to like posts.");
+            return;
+        }
 
         if (!response.ok) throw new Error('Network response was not ok');
 
