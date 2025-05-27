@@ -86,8 +86,8 @@ See model relationships in the [Architecture Overview](docs/architecture.md#uml-
 ### Local Setup
 
 ```
-git clone https://git.foxminded.ua/foxstudent107874/task-12-create-basic-application.git
-cd task-12-create-basic-application
+git clone https://github.com/Aleksandr-ln/contentflow.git
+cd contentflow
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
@@ -215,8 +215,8 @@ This guide outlines the steps to deploy ContentFlow using AWS EC2, RDS (PostgreS
 ### Clone and Set Up the Project
 
 ```
-git clone https://git.foxminded.ua/foxstudent107874/task-12-create-basic-application.git
-cd task-12-create-basic-application
+git clone https://github.com/Aleksandr-ln/contentflow.git
+cd contentflow
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
