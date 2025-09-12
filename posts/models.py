@@ -1,14 +1,29 @@
+from typing import Any
+
 from django.conf import settings
 from django.db import models
+from django.db.models import UniqueConstraint
+from django.db.models.functions import Lower
 from django.urls import reverse
 
 
 class Tag(models.Model):
-    """
-    Tag model for categorizing posts.
-    """
-
+    """Normalized, case-insensitive unique tag."""
     name = models.CharField(max_length=30, unique=True)
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                Lower("name"),
+                name="uniq_tag_name_lower",
+            ),
+        ]
+
+    def save(self, *args: Any, **kwargs: Any) -> None:
+        """Normalize to lowercase for consistency (defense-in-depth)."""
+        if self.name:
+            self.name = self.name.strip().lower()
+        super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         return self.name
