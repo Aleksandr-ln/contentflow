@@ -1,44 +1,82 @@
-from django.contrib.auth import get_user_model
-from django.db.models import Count, Exists, OuterRef, QuerySet
+from typing import Final
+from typing import TYPE_CHECKING
+from django.db.models import Count, Exists, OuterRef, Prefetch, QuerySet
 
 from likes.models import Like
-from posts.models import Post
+from posts.models import Post, Image, Tag
 
-User = get_user_model()
+if TYPE_CHECKING:
+    from users.models import User
+
+IMAGES_QS: Final = (
+    Image.objects.only("id", "post_id", "image", "thumbnail").order_by("id")
+)
+TAGS_QS: Final = Tag.objects.only("id", "name").order_by("name")
 
 
-def get_post_feed_for_user(user: User) -> QuerySet:
+def _base_feed_qs(viewer: "User") -> QuerySet[Post]:
     """
-    Return queryset of posts for main feed with annotated like info.
+    Build the base queryset for posts with anti-N+1 guarantees.
+
+    - `select_related("author")` joins FK to avoid extra queries per post.
+    - `prefetch_related` batches images & tags into 2 additional queries.
+    - `annotate` computes likes_count and has_liked in the main SELECT.
+    - `only(...)` keeps row width minimal (I/O & deserialization savings).
+    - Secondary order by "-id" stabilizes ordering for identical timestamps.
+
+    Returns:
+        QuerySet[Post]: Lightweight, slice-ready queryset for pagination.
     """
-    return Post.objects.annotate(
-        likes_count=Count('likes', distinct=True),
-        has_liked=Exists(
-            Like.objects.filter(user=user, post=OuterRef('pk'))
+    return (
+        Post.objects.select_related("author")
+        .prefetch_related(
+            Prefetch("images", queryset=IMAGES_QS),
+            Prefetch("tags", queryset=TAGS_QS),
         )
-    ).prefetch_related('images', 'tags', 'author').order_by('-created_at')
-
-
-def get_posts_by_tag_for_user(user: User, tag_name: str) -> QuerySet:
-    """
-    Return queryset of posts filtered by tag with like annotations.
-    """
-    return Post.objects.filter(tags__name=tag_name.lower()).annotate(
-        likes_count=Count('likes', distinct=True),
-        has_liked=Exists(
-            Like.objects.filter(user=user, post=OuterRef('pk'))
+        .annotate(
+            likes_count=Count("likes", distinct=True),
+            has_liked=Exists(
+                Like.objects.filter(user=viewer, post=OuterRef("pk"))
+            ),
         )
-    ).prefetch_related('images', 'tags', 'author').order_by('-created_at')
+        .only("id", "author_id", "caption", "created_at")
+        .order_by("-created_at", "-id")
+    )
 
 
-def get_posts_by_user(viewed_user: User, viewer: User) -> QuerySet:
+def get_post_feed_for_user(user: "User") -> QuerySet[Post]:
     """
-    Return a queryset of posts authored by viewed_user,
-    annotated with like info for the current viewer.
+    Main feed queryset (anti-N+1).
+
+    Returns:
+        QuerySet[Post]: Optimized queryset of latest posts for the feed.
     """
-    return Post.objects.filter(author=viewed_user).annotate(
-        likes_count=Count('likes', distinct=True),
-        has_liked=Exists(
-            Like.objects.filter(user=viewer, post=OuterRef('pk'))
-        )
-    ).prefetch_related('images', 'tags').order_by('-created_at')
+    return _base_feed_qs(viewer=user)
+
+
+def get_posts_by_tag_for_user(user: "User", tag_name: str) -> QuerySet[Post]:
+    """
+    Tag-filtered feed (anti-N+1).
+
+    Args:
+        user: Current viewer (used for has_liked).
+        tag_name: Tag name to filter by (case-insensitive).
+
+    Returns:
+        QuerySet[Post]: Optimized queryset filtered by tag.
+    """
+    return _base_feed_qs(viewer=user).filter(tags__name=tag_name.lower())
+
+
+def get_posts_by_user(viewed_user: "User", viewer: "User") -> QuerySet[Post]:
+    """
+    Profile feed (posts by a specific author) with anti-N+1.
+
+    Args:
+        viewed_user: Author whose posts are listed.
+        viewer: Current viewer (used for has_liked).
+
+    Returns:
+        QuerySet[Post]: Optimized queryset of posts by `viewed_user`.
+    """
+    return _base_feed_qs(viewer=viewer).filter(author=viewed_user)

@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 
 from decouple import config
+import socket
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -73,6 +74,17 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+if DEBUG:
+    INSTALLED_APPS += ["debug_toolbar"]
+    MIDDLEWARE.insert(1, "debug_toolbar.middleware.DebugToolbarMiddleware")
+
+    INTERNAL_IPS = ["127.0.0.1", "localhost"]
+    try:
+        hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+        INTERNAL_IPS += [ip[:-1] + "1" for ip in ips]
+    except Exception:
+        pass
 
 ROOT_URLCONF = "contentflow.urls"
 
